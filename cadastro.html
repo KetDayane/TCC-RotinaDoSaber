@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="index.css">
+    
+    <title>Cadastro/Login</title>
+</head>
+
+<body>
+ <header>
+        <nav class="nav-bar">
+            <div class="logo">
+                <h1>Logo</h1>
+            </div>
+            <div class="nav-list">
+                <ul>
+                    <li class="nav-item"><a href="#" class="nav-link">Início</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Projetos</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link"> Sobre</a></li>
+                </ul>
+            </div>
+            <div class="login-button">
+                <button><a href="cadastro.html">Entrar</a></button>
+            </div>
+
+            <div class="mobile-menu-icon">
+                <button onclick="menuShow()"><img class="icon" src="assets/img/menu_white_36dp.svg" alt=""></button>
+            </div>
+        </nav>
+        <div class="mobile-menu">
+            <ul>
+                <li class="nav-item"><a href="#" class="nav-link">Início</a></li>
+                <li class="nav-item"><a href="#" class="nav-link">Projetos</a></li>
+                <li class="nav-item"><a href="#" class="nav-link">Sobre</a></li>
+            </ul>
+
+            <div class="login-button">
+                <button><a href="#">Entrar</a></button>
+            </div>
+        </div>
+    </header>
+
+<div class= "caso">
+<div class="bodyCadastro">
+    <div class="container" id="container">
+        <div class="form-container sign-up">
+            <form>
+                <h1>Criar conta</h1>
+                <div class="social-icons">
+                    <a href="#" class="icon"><i class="fa-brands fa-google-plus-g"></i></a>
+                  
+                </div>
+                <span>registre com os seus dados pessoais</span>
+                <input type="text" placeholder="Name">
+                <input type="email" placeholder="Email">
+                <input type="password" placeholder="Password">
+                <button>CADASTRAR-SE</button>
+            </form>
+        </div>
+        <div class="form-container sign-in">
+            <form>
+                <h1>Login</h1>
+                <div class="social-icons">
+                    <a href="#" class="icon"><i class="fa-brands fa-google-plus-g"></i></a>
+                </div>
+                <span>entre com o seu email e senha</span>
+                <input type="email" placeholder="Email">
+                <input type="senha" placeholder="Senha">
+                <a href="#">esqueceu sua senha?</a>
+                <button>LOGIN</button>
+            </form>
+        </div>
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-left">
+                    <h1>Bem-vindo(a) de volta!</h1>
+                    <p>Já tem uma conta? Faça o login!</p>
+                    <button class="hidden" id="login">LOGIN</button>
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <h1>Olá, amigo(a)!</h1>
+                    <p>Cadastre-se com seus dados pessoais para usar todos os recursos do site</p>
+                    <button class="hidden" id="register">CADASTRAR-SE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
