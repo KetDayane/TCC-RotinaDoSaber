@@ -6,20 +6,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./index.css">
-    <title>Menu Responsivo</title>
+    <title>StudyBuddy - Seu Assistente de Estudos</title>
 </head>
 
 <body>
     <header>
         <nav class="nav-bar">
             <div class="logo">
-                <h1><Img src="/img/imagem.png"> </h1>
+                <h1><img src="/img/imagem.png" alt="Logo StudyBuddy"> </h1>
             </div>
             <div class="nav-list">
                 <ul>
                     <li class="nav-item"><a href="#" class="nav-link">Início</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">Projetos</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link"> Sobre</a></li>
+                    <li class="nav-item"><a href="#recursos" class="nav-link">Recursos</a></li>
+                    <li class="nav-item"><a href="#sobre" class="nav-link">Sobre</a></li>
                 </ul>
             </div>
             <div class="login-button">
@@ -32,21 +32,150 @@
         </nav>
         <div class="mobile-menu">
             <ul>
-                <li class="nav-item"><a href="index.html" class="nav-link">Início</a></li>
-                <li class="nav-item"><a href="#" class="nav-link">Projetos</a></li>
-                <li class="nav-item"><a href="#" class="nav-link">Feedback</a></li>
+                <li class="nav-item"><a href="#" class="nav-link">Início</a></li>
+                <li class="nav-item"><a href="#recursos" class="nav-link">Recursos</a></li>
+                <li class="nav-item"><a href="#sobre" class="nav-link">Sobre</a></li>
             </ul>
 
             <div class="login-button">
-                <button><a href="#">Entrar</a></button>
+                <button><a href="cadastro.html">Entrar</a></button>
             </div>
         </div>
     </header>
-    <div class="corpo">
 
+    <div class="corpo">
+        <section class="hero">
+            <div class="hero-content">
+                <h1>StudyBuddy</h1>
+                <h2>Seu assistente pessoal de estudos</h2>
+                <p>Organize seus estudos, acompanhe seu progresso e alcance seus objetivos acadêmicos com o StudyBuddy.</p>
+                <div class="cta-buttons">
+                    <button class="primary-btn"><a href="cadastro.html">Começar agora</a></button>
+                    <button class="secondary-btn"><a href="#recursos">Saiba mais</a></button>
+                </div>
+            </div>
+        </section>
+
+        <section id="recursos" class="features">
+            <h2>Recursos do StudyBuddy</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3>Organização de Materiais</h3>
+                    <p>Organize todos os seus materiais de estudo em um só lugar, com acesso fácil e rápido.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⏱️</div>
+                    <h3>Gerenciamento de Tempo</h3>
+                    <p>Crie cronogramas de estudo personalizados e receba lembretes para manter o foco.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Acompanhamento de Progresso</h3>
+                    <p>Visualize seu progresso com gráficos e estatísticas para melhorar seu desempenho.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3>Técnicas de Estudo</h3>
+                    <p>Acesse métodos comprovados como Pomodoro, flashcards e mapas mentais.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="como-funciona" class="how-it-works">
+            <h2>Como o StudyBuddy funciona</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Crie sua conta</h3>
+                    <p>Registre-se gratuitamente e configure seu perfil de estudante.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Defina seus objetivos</h3>
+                    <p>Estabeleça metas de estudo claras e prazos realistas.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Organize seu material</h3>
+                    <p>Adicione seus materiais de estudo e organize por disciplinas.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Comece a estudar</h3>
+                    <p>Use as ferramentas do StudyBuddy para maximizar seu aprendizado.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="sobre" class="about">
+            <h2>Sobre o StudyBuddy</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>O StudyBuddy foi desenvolvido por estudantes para estudantes, com o objetivo de tornar o processo de aprendizagem mais eficiente e agradável.</p>
+                    <p>Nossa missão é ajudar os estudantes a alcançarem seu potencial máximo através de ferramentas intuitivas e métodos de estudo baseados em evidências científicas.</p>
+                    <p>Seja para preparação para vestibulares, concursos, ou simplesmente para melhorar seu desempenho acadêmico, o StudyBuddy é o parceiro ideal para sua jornada de aprendizado.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="testimonials">
+            <h2>O que nossos usuários dizem</h2>
+            <div class="testimonial-cards">
+                <div class="testimonial">
+                    <p>"O StudyBuddy transformou minha forma de estudar. Consegui organizar meu tempo e melhorei minhas notas significativamente!"</p>
+                    <div class="user">Ana C., Estudante de Medicina</div>
+                </div>
+                <div class="testimonial">
+                    <p>"As ferramentas de acompanhamento de progresso me ajudaram a identificar onde eu precisava focar mais. Aprovado no concurso que tanto queria!"</p>
+                    <div class="user">Pedro M., Concurseiro</div>
+                </div>
+                <div class="testimonial">
+                    <p>"Interface intuitiva e recursos que realmente fazem diferença. Recomendo para todos os estudantes."</p>
+                    <div class="user">Carla S., Professora</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta">
+            <h2>Pronto para transformar seus estudos?</h2>
+            <p>Junte-se a milhares de estudantes que já estão melhorando seu desempenho com o StudyBuddy.</p>
+            <button class="primary-btn"><a href="cadastro.html">Criar conta gratuita</a></button>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h3>StudyBuddy</h3>
+                <p>Seu assistente de estudos</p>
+            </div>
+            <div class="footer-links">
+                <h4>Links Rápidos</h4>
+                <ul>
+                    <li><a href="#">Início</a></li>
+                    <li><a href="#recursos">Recursos</a></li>
+                    <li><a href="#sobre">Sobre</a></li>
+                    <li><a href="cadastro.html">Entrar</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h4>Contato</h4>
+                <p>Email: contato@studybuddy.com</p>
+                <p>Redes sociais:</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 StudyBuddy. Todos os direitos reservados.</p>
+        </div>
+    </footer>
 
     <script src="assets/js/script.js"></script>
 </body>
-
 
 </html>
