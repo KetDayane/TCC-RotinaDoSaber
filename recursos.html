@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyBuddy - Recursos</title>
+    <link rel="stylesheet" href="./index.css">
+    <style>
+        .recursos-container {
+            background-color: #f9f9f9;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #7F66D9;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+        }
+
+        .recursos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .recurso-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .recurso-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .recurso-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .recurso-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .recurso-description {
+            color: #666;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .materias { background: linear-gradient(45deg, #ff6b6b, #ff8e8e); }
+        .calendario { background: linear-gradient(45deg, #4ecdc4, #44a08d); }
+        .tarefas { background: linear-gradient(45deg, #45b7d1, #96c93d); }
+        .planner { background: linear-gradient(45deg, #f093fb, #f5576c); }
+        .cards { background: linear-gradient(45deg, #ffecd2, #fcb69f); }
+        
+        .logo img {
+            width: 80px;
+            height: 60px;
+        }
+        
+        /* Reset específico para o header */
+        header {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-bar {
+            padding: 0.5rem 4rem;
+        }
+        
+        .logo h1 {
+            margin: 0;
+            padding: 0;
+            font-size: inherit;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="nav-bar">
+            <div class="logo">
+                <h1><img src="img/imagem.png" alt="Logo StudyBuddy"> </h1>
+            </div>
+            <div class="nav-list">
+                <ul>
+                    <li class="nav-item"><a href="index.html" class="nav-link">Início</a></li>
+                    <li class="nav-item"><a href="recursos.html" class="nav-link">Recursos</a></li>
+                    <li class="nav-item"><a href="index.html#sobre" class="nav-link">Sobre</a></li>
+                </ul>
+            </div>
+            <div class="login-button">
+                <button><a href="cadastro.html">Entrar</a></button>
+            </div>
+
+            <div class="mobile-menu-icon">
+                <button onclick="menuShow()"><img class="icon" src="assets/img/menu_white_36dp.svg" alt=""></button>
+            </div>
+        </nav>
+        <div class="mobile-menu">
+            <ul>
+                <li class="nav-item"><a href="index.html" class="nav-link">Início</a></li>
+                <li class="nav-item"><a href="recursos.html" class="nav-link">Recursos</a></li>
+                <li class="nav-item"><a href="index.html#sobre" class="nav-link">Sobre</a></li>
+            </ul>
+
+            <div class="login-button">
+                <button><a href="cadastro.html">Entrar</a></button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="recursos-container">
+        <div class="container">
+            <h1>Recursos de Estudo</h1>
+        
+        <div class="recursos-grid">
+            <a href="materias.html" class="recurso-card">
+                <div class="recurso-icon materias">📚</div>
+                <div class="recurso-title">Matérias</div>
+                <div class="recurso-description">
+                    Organize suas matérias com cores personalizadas, anotações e resumos para facilitar seus estudos.
+                </div>
+            </a>
+
+            <a href="calendario.html" class="recurso-card">
+                <div class="recurso-icon calendario">📅</div>
+                <div class="recurso-title">Calendário</div>
+                <div class="recurso-description">
+                    Anote eventos importantes, aniversários, datas de provas e lições para nunca mais esquecer.
+                </div>
+            </a>
+
+            <a href="tarefas.html" class="recurso-card">
+                <div class="recurso-icon tarefas">✅</div>
+                <div class="recurso-title">Lista de Tarefas</div>
+                <div class="recurso-description">
+                    Gerencie suas tarefas por tópicos (casa, trabalho, escola) com horários e controle de conclusão.
+                </div>
+            </a>
+
+            <a href="planner.html" class="recurso-card">
+                <div class="recurso-icon planner">📋</div>
+                <div class="recurso-title">Programação Semanal</div>
+                <div class="recurso-description">
+                    Visualize sua semana completa e organize suas atividades com o planner semanal.
+                </div>
+            </a>
+
+            <a href="cards.html" class="recurso-card">
+                <div class="recurso-icon cards">🃏</div>
+                <div class="recurso-title">Cards de Estudo</div>
+                <div class="recurso-description">
+                    Crie cards personalizáveis para perguntas e anotações de estudo com cores e títulos customizados.
+                </div>
+            </a>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
