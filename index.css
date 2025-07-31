@@ -23,7 +23,7 @@ img {
 
 /* Header e Navegação */
 header {
-    background-color: #9933CC; /* Roxo da paleta */
+    background-color: #7F66D9   ; /* Roxo da paleta */
     box-shadow: 0px 3px 10px rgba(13, 13, 13, 0.2);
     position: sticky;
     position: relative;
@@ -70,21 +70,21 @@ header {
 }
 
 .nav-link:hover {
-    color: #F2AB6D; /* Laranja da paleta */
+    color: #F2D46F; /* Laranja da paleta */
 }
 
 .login-button button {
     border: none;
     padding: 10px 15px;
     border-radius: 5px;
-    background-color: #F27999; /* Rosa da paleta */
+    background-color: #F2D46F; /* Rosa da paleta */
     margin-top: 13px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
 .login-button button:hover {
-    background-color: #e05c7e;
+    background-color: #F2D46F;
 }
 
 .login-button button a {
@@ -102,10 +102,9 @@ header {
     display: none;
 }
 
-/* Seção Hero */
+
 .hero {
-    background: linear-gradient(135deg, #7F66D9 0%, #6DA7F2 100%);
-    color: white;
+    background: linear-gradient(135deg, #B5A9F9 0%, #7F66D9 100%);    color: white;
     padding: 80px 20px;
     text-align: center;
 }
@@ -149,7 +148,7 @@ header {
 }
 
 .primary-btn {
-    background-color: #F27999; /* Rosa da paleta */
+    background-color: #F2D46F; /* Rosa da paleta */
     color: white;
 }
 
@@ -251,7 +250,7 @@ header {
     justify-content: center;
     width: 50px;
     height: 50px;
-    background-color: #F2AB6D; /* Laranja da paleta */
+    background-color: #F2D46F; /* Laranja da paleta */
     color: white;
     font-size: 1.5rem;
     font-weight: bold;
@@ -333,7 +332,7 @@ header {
 /* CTA Final */
 .cta {
     padding: 80px 20px;
-    background: linear-gradient(135deg, #F27999 0%, #F2AB6D 100%);
+    background: linear-gradient(135deg, #B5A9F9 0%, #7F66D9 100%);
     color: white;
     text-align: center;
 }
@@ -353,8 +352,8 @@ header {
 
 /* Footer */
 footer {
-    background-color: #0D0D0D;
-    color: white;
+    background-color: #fff;
+    color: black;
     padding: 50px 20px 20px;
 }
 
@@ -375,7 +374,7 @@ footer {
 .footer-links h4, .footer-contact h4 {
     font-size: 1.3rem;
     margin-bottom: 20px;
-    color: #F2AB6D; /* Laranja da paleta */
+    color: #F2D46F; /* Laranja da paleta */
 }
 
 .footer-links ul {
@@ -388,12 +387,12 @@ footer {
 
 .footer-links a {
     text-decoration: none;
-    color: white;
+    color: black;
     transition: color 0.3s;
 }
 
 .footer-links a:hover {
-    color: #F27999; /* Rosa da paleta */
+    color: #F2D46F; /* Rosa da paleta */
 }
 
 .footer-contact p {
@@ -407,7 +406,7 @@ footer {
 }
 
 .social-icons a {
-    color: white;
+    color: black;
     font-size: 1.5rem;
     transition: color 0.3s;
 }
