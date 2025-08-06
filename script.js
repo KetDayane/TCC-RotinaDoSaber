@@ -82,6 +82,23 @@ function saveProfile() {
     closeProfile();
 }
 
+function logoutAccount() {
+    if (confirm('Tem certeza que deseja sair da sua conta?')) {
+        logout();
+    }
+}
+
+function deleteAccount() {
+    if (confirm('ATENÇÃO: Esta ação irá apagar permanentemente sua conta e todos os seus dados. Tem certeza que deseja continuar?')) {
+        if (confirm('Esta é sua última chance! Todos os dados serão perdidos. Confirma a exclusão da conta?')) {
+            // Limpar todos os dados do usuário
+            localStorage.clear();
+            alert('Conta apagada com sucesso!');
+            window.location.href = 'index.html';
+        }
+    }
+}
+
 // Fechar menus ao clicar fora
 document.addEventListener('click', function(event) {
     const profileButton = event.target.closest('[onclick*="toggleProfile"]');
@@ -155,7 +172,12 @@ function updateAuthButton() {
         if (authButton) {
             authButton.innerHTML = `
                 <div style="position: relative;">
-                    <button onclick="toggleProfileMenu()" style="display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; border-radius: 50%; font-size: 1.5rem; padding: 0;">👤</button>
+                    <button onclick="toggleProfileMenu()" style="display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; border-radius: 50%; background: white; border: 2px solid #ddd; padding: 0;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" fill="#666"/>
+                            <path d="M12 14C7.58172 14 4 17.5817 4 22H20C20 17.5817 16.4183 14 12 14Z" fill="#666"/>
+                        </svg>
+                    </button>
                     <div id="profileMenu" style="display: none; position: absolute; right: 0; top: 50px; background: white; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); min-width: 180px; z-index: 1000;">
                         <div onclick="openProfile()" style="padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 8px;"><span>👤</span> Acessar Perfil</div>
                         <div onclick="confirmLogout()" style="padding: 12px 16px; cursor: pointer; display: flex; align-items: center; gap: 8px; color: #ff4757;"><span>🚪</span> Sair da Conta</div>
@@ -165,7 +187,12 @@ function updateAuthButton() {
         if (authButtonMobile) {
             authButtonMobile.innerHTML = `
                 <div style="position: relative;">
-                    <button onclick="toggleProfileMenuMobile()" style="display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; border-radius: 50%; font-size: 1.5rem; padding: 0;">👤</button>
+                    <button onclick="toggleProfileMenuMobile()" style="display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; border-radius: 50%; background: white; border: 2px solid #ddd; padding: 0;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" fill="#666"/>
+                            <path d="M12 14C7.58172 14 4 17.5817 4 22H20C20 17.5817 16.4183 14 12 14Z" fill="#666"/>
+                        </svg>
+                    </button>
                     <div id="profileMenuMobile" style="display: none; position: absolute; right: 0; top: 50px; background: white; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); min-width: 180px; z-index: 1000;">
                         <div onclick="openProfile()" style="padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 8px;"><span>👤</span> Acessar Perfil</div>
                         <div onclick="confirmLogout()" style="padding: 12px 16px; cursor: pointer; display: flex; align-items: center; gap: 8px; color: #ff4757;"><span>🚪</span> Sair da Conta</div>

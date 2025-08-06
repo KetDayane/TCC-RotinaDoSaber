@@ -321,6 +321,50 @@
             border-radius: 15px 15px 0 0;
         }
 
+        .media-preview-item {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #ddd;
+        }
+
+        .media-preview-item img, .media-preview-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .media-remove-btn {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .subject-media {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .subject-media img, .subject-media video {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
         .logo img {
             width: 80px;
             height: 60px;
@@ -450,8 +494,14 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="description">Descrição:</label>
+                    <label for="description">Resumo/Anotações:</label>
                     <textarea id="description" rows="8" maxlength="10000"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="mediaFiles">Fotos e Vídeos:</label>
+                    <input type="file" id="mediaFiles" multiple accept="image/*,video/*" style="padding: 8px; border: 2px solid #ddd; border-radius: 8px; width: 100%;">
+                    <div id="mediaPreview" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>
                 </div>
 
                 <div class="form-group">
@@ -478,7 +528,52 @@
             loadSubjects();
             setupColorPicker();
             setupCategoryHandler();
+            setupMediaHandler();
         });
+
+        function setupMediaHandler() {
+            const mediaInput = document.getElementById('mediaFiles');
+            const mediaPreview = document.getElementById('mediaPreview');
+            
+            mediaInput.addEventListener('change', function() {
+                mediaPreview.innerHTML = '';
+                Array.from(this.files).forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const item = document.createElement('div');
+                        item.className = 'media-preview-item';
+                        
+                        if (file.type.startsWith('image/')) {
+                            item.innerHTML = `
+                                <img src="${e.target.result}" alt="Preview">
+                                <button class="media-remove-btn" onclick="removeMediaFile(${index})">×</button>
+                            `;
+                        } else if (file.type.startsWith('video/')) {
+                            item.innerHTML = `
+                                <video src="${e.target.result}" muted></video>
+                                <button class="media-remove-btn" onclick="removeMediaFile(${index})">×</button>
+                            `;
+                        }
+                        
+                        mediaPreview.appendChild(item);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+        }
+
+        function removeMediaFile(index) {
+            const mediaInput = document.getElementById('mediaFiles');
+            const dt = new DataTransfer();
+            const files = Array.from(mediaInput.files);
+            
+            files.forEach((file, i) => {
+                if (i !== index) dt.items.add(file);
+            });
+            
+            mediaInput.files = dt.files;
+            mediaInput.dispatchEvent(new Event('change'));
+        }
 
         function setupCategoryHandler() {
             const categorySelect = document.getElementById('category');
@@ -577,23 +672,45 @@
             const customCategory = document.getElementById('customCategory');
             const finalCategory = categorySelect.value === 'outros' ? customCategory.value : categorySelect.value;
             
-            const subject = {
-                category: finalCategory,
-                title: document.getElementById('title').value,
-                description: document.getElementById('description').value,
-                color: selectedColor,
-                id: editingIndex >= 0 ? subjects[editingIndex].id : Date.now()
-            };
+            const mediaFiles = document.getElementById('mediaFiles').files;
+            const mediaData = [];
+            
+            // Processar arquivos de mídia
+            const processFiles = Array.from(mediaFiles).map(file => {
+                return new Promise(resolve => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        mediaData.push({
+                            name: file.name,
+                            type: file.type,
+                            data: e.target.result
+                        });
+                        resolve();
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+            
+            Promise.all(processFiles).then(() => {
+                const subject = {
+                    category: finalCategory,
+                    title: document.getElementById('title').value,
+                    description: document.getElementById('description').value,
+                    color: selectedColor,
+                    media: mediaData,
+                    id: editingIndex >= 0 ? subjects[editingIndex].id : Date.now()
+                };
 
-            if (editingIndex >= 0) {
-                subjects[editingIndex] = subject;
-            } else {
-                subjects.push(subject);
-            }
+                if (editingIndex >= 0) {
+                    subjects[editingIndex] = subject;
+                } else {
+                    subjects.push(subject);
+                }
 
-            localStorage.setItem('subjects', JSON.stringify(subjects));
-            loadSubjects();
-            closeModal();
+                localStorage.setItem('subjects', JSON.stringify(subjects));
+                loadSubjects();
+                closeModal();
+            });
         });
 
         function loadSubjects() {
@@ -601,6 +718,20 @@
             grid.innerHTML = '';
 
             subjects.forEach((subject, index) => {
+                const mediaHtml = subject.media && subject.media.length > 0 ? `
+                    <div class="subject-media">
+                        ${subject.media.slice(0, 3).map(media => {
+                            if (media.type.startsWith('image/')) {
+                                return `<img src="${media.data}" alt="${media.name}">`;
+                            } else if (media.type.startsWith('video/')) {
+                                return `<video src="${media.data}" muted></video>`;
+                            }
+                            return '';
+                        }).join('')}
+                        ${subject.media.length > 3 ? `<div style="display: flex; align-items: center; justify-content: center; width: 100px; height: 100px; background: #f0f0f0; border-radius: 8px; font-size: 0.9rem; color: #666;">+${subject.media.length - 3}</div>` : ''}
+                    </div>
+                ` : '';
+                
                 const card = document.createElement('div');
                 card.className = 'subject-card';
                 card.innerHTML = `
@@ -613,6 +744,7 @@
                         </div>
                     </div>
                     <h3 class="subject-title">${subject.title}</h3>
+                    ${mediaHtml}
                 `;
                 
                 card.addEventListener('click', () => openViewModal(index));
@@ -659,8 +791,23 @@
             header.style.borderColor = subject.color;
             title.textContent = subject.title;
             category.textContent = getCategoryName(subject.category);
-            description.textContent = subject.description || 'Nenhuma descrição adicionada.';
             
+            let content = subject.description || 'Nenhuma descrição adicionada.';
+            
+            if (subject.media && subject.media.length > 0) {
+                const mediaHtml = subject.media.map(media => {
+                    if (media.type.startsWith('image/')) {
+                        return `<img src="${media.data}" alt="${media.name}" style="max-width: 200px; max-height: 200px; margin: 10px; border-radius: 8px; cursor: pointer;" onclick="window.open('${media.data}', '_blank')">`;
+                    } else if (media.type.startsWith('video/')) {
+                        return `<video src="${media.data}" controls style="max-width: 200px; max-height: 200px; margin: 10px; border-radius: 8px;">`;
+                    }
+                    return '';
+                }).join('');
+                
+                content += `<div style="margin-top: 20px; border-top: 2px solid #eee; padding-top: 20px;"><h3>Mídias:</h3><div style="display: flex; flex-wrap: wrap;">${mediaHtml}</div></div>`;
+            }
+            
+            description.innerHTML = content;
             modal.style.display = 'block';
         }
         
