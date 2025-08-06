@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyBuddy - Assuntos</title>
+    <link rel="stylesheet" href="./index.css">
+    <style>
+        .assuntos-container {
+            background-color: #f9f9f9;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #7F66D9;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+        }
+
+        .add-subject-btn {
+            background-color: #7F66D9;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-bottom: 30px;
+            transition: background-color 0.3s;
+        }
+
+        .add-subject-btn:hover {
+            background-color: #6B52C7;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: #7F66D9;
+            border-radius: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: #6B52C7;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #7F66D9;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #7F66D9;
+        }
+
+        .color-picker {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: border-color 0.3s;
+        }
+
+        .color-option.selected {
+            border-color: #333;
+        }
+
+        .save-btn {
+            background-color: #7F66D9;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .save-btn:hover {
+            background-color: #6B52C7;
+        }
+
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .subject-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .subject-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .subject-category {
+            background-color: #f0f0f0;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .subject-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .edit-btn, .delete-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .edit-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        .delete-btn:hover {
+            background-color: #ffe6e6;
+        }
+
+        .subject-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .subject-description {
+            color: #666;
+            line-height: 1.5;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .subject-description.expanded {
+            max-height: 200px;
+        }
+
+        .expand-btn {
+            background: none;
+            border: none;
+            color: #7F66D9;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            padding: 5px 0;
+            transition: color 0.3s;
+        }
+
+        .expand-btn:hover {
+            color: #6B52C7;
+        }
+
+        .subject-view-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+        }
+
+        .subject-view-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .subject-view-header {
+            border-bottom: 3px solid;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .subject-view-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .subject-view-category {
+            background-color: #f0f0f0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 1rem;
+            color: #666;
+            display: inline-block;
+        }
+
+        .subject-view-description {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: #555;
+            white-space: pre-wrap;
+        }
+
+        .subject-view-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: #aaa;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .subject-view-close:hover {
+            color: #7F66D9;
+        }
+
+        .color-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .logo img {
+            width: 80px;
+            height: 60px;
+        }
+        
+        header {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-bar {
+            padding: 0.5rem 4rem;
+        }
+        
+        .logo h1 {
+            margin: 0;
+            padding: 0;
+            font-size: inherit;
+        }
+
+        @media screen and (max-width: 768px) {
+            .subjects-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="nav-bar">
+            <div class="logo">
+                <h1><img src="img/imagem.png" alt="Logo StudyBuddy"> </h1>
+            </div>
+            <div class="nav-list">
+                <ul>
+                    <li class="nav-item"><a href="index.html" class="nav-link">Início</a></li>
+                    <li class="nav-item"><a href="recursos.html" class="nav-link">Recursos</a></li>
+                    <li class="nav-item"><a href="index.html#sobre" class="nav-link">Sobre</a></li>
+                </ul>
+            </div>
+            <div class="login-button" id="authButton">
+                <button><a href="cadastro.html">Entrar</a></button>
+            </div>
+
+            <div class="mobile-menu-icon">
+                <button onclick="menuShow()"><img class="icon" src="assets/img/menu_white_36dp.svg" alt=""></button>
+            </div>
+        </nav>
+        <div class="mobile-menu">
+            <ul>
+                <li class="nav-item"><a href="index.html" class="nav-link">Início</a></li>
+                <li class="nav-item"><a href="recursos.html" class="nav-link">Recursos</a></li>
+                <li class="nav-item"><a href="index.html#sobre" class="nav-link">Sobre</a></li>
+            </ul>
+
+            <div class="login-button" id="authButtonMobile">
+                <button><a href="cadastro.html">Entrar</a></button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="assuntos-container">
+        <div class="container">
+            <h1>Meus Assuntos</h1>
+            
+            <button class="add-subject-btn" onclick="openModal()">+ Adicionar Novo Assunto</button>
+            
+            <div class="subjects-grid" id="subjectsGrid">
+                <!-- Assuntos serão adicionados aqui dinamicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de visualização em tela cheia -->
+    <div id="subjectViewModal" class="subject-view-modal">
+        <div class="subject-view-content">
+            <span class="subject-view-close" onclick="closeViewModal()">&times;</span>
+            <div class="subject-view-header" id="viewHeader">
+                <h1 class="subject-view-title" id="viewTitle"></h1>
+                <span class="subject-view-category" id="viewCategory"></span>
+            </div>
+            <div class="subject-view-description" id="viewDescription"></div>
+        </div>
+    </div>
+
+    <!-- Modal para adicionar/editar assunto -->
+    <div id="subjectModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Adicionar Novo Assunto</h2>
+            
+            <form id="subjectForm">
+                <div class="form-group">
+                    <label for="category">Categoria:</label>
+                    <select id="category" required>
+                        <option value="">Selecione uma categoria</option>
+                        <option value="matematica">Matemática</option>
+                        <option value="historia">História</option>
+                        <option value="geografia">Geografia</option>
+                        <option value="ciencias">Ciências</option>
+                        <option value="portugues">Português</option>
+                        <option value="ingles">Inglês</option>
+                        <option value="fisica">Física</option>
+                        <option value="quimica">Química</option>
+                        <option value="biologia">Biologia</option>
+                        <option value="musica">Música</option>
+                        <option value="arte">Arte</option>
+                        <option value="trabalho">Trabalho</option>
+                        <option value="dever-casa">Dever de Casa</option>
+                        <option value="outros">Outros</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="customCategoryGroup" style="display: none;">
+                    <label for="customCategory">Digite sua categoria:</label>
+                    <input type="text" id="customCategory" placeholder="Ex: Programação, Culinária, etc." maxlength="30">
+                </div>
+
+                <div class="form-group">
+                    <label for="title">Título do Assunto:</label>
+                    <input type="text" id="title" required maxlength="50">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Descrição:</label>
+                    <textarea id="description" rows="8" maxlength="10000"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="colorPicker">Cor do Assunto:</label>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <input type="color" id="colorPicker" value="#7F66D9" style="width: 60px; height: 40px; border: none; border-radius: 8px; cursor: pointer;">
+                        <input type="text" id="colorHex" value="#7F66D9" placeholder="#000000" maxlength="7" style="width: 100px; padding: 8px; border: 2px solid #ddd; border-radius: 8px; font-family: monospace;">
+                    </div>
+                </div>
+
+                <button type="submit" class="save-btn">Salvar Assunto</button>
+            </form>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+    <script>
+        let subjects = JSON.parse(localStorage.getItem('subjects')) || [];
+        let editingIndex = -1;
+        let selectedColor = '#7F66D9';
+
+        // Carregar assuntos ao inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSubjects();
+            setupColorPicker();
+            setupCategoryHandler();
+        });
+
+        function setupCategoryHandler() {
+            const categorySelect = document.getElementById('category');
+            const customCategoryGroup = document.getElementById('customCategoryGroup');
+            const customCategoryInput = document.getElementById('customCategory');
+            
+            categorySelect.addEventListener('change', function() {
+                if (this.value === 'outros') {
+                    customCategoryGroup.style.display = 'block';
+                    customCategoryInput.required = true;
+                } else {
+                    customCategoryGroup.style.display = 'none';
+                    customCategoryInput.required = false;
+                    customCategoryInput.value = '';
+                }
+            });
+        }
+
+        function openModal(index = -1) {
+            const modal = document.getElementById('subjectModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const form = document.getElementById('subjectForm');
+            
+            editingIndex = index;
+            
+            if (index >= 0) {
+                // Editando assunto existente
+                modalTitle.textContent = 'Editar Assunto';
+                const subject = subjects[index];
+                const categorySelect = document.getElementById('category');
+                const customCategoryGroup = document.getElementById('customCategoryGroup');
+                const customCategoryInput = document.getElementById('customCategory');
+                
+                // Verificar se é categoria personalizada
+                const predefinedCategories = ['matematica', 'historia', 'geografia', 'ciencias', 'portugues', 'ingles', 'fisica', 'quimica', 'biologia', 'musica', 'arte', 'trabalho', 'dever-casa'];
+                
+                if (predefinedCategories.includes(subject.category)) {
+                    categorySelect.value = subject.category;
+                    customCategoryGroup.style.display = 'none';
+                } else {
+                    categorySelect.value = 'outros';
+                    customCategoryInput.value = subject.category;
+                    customCategoryGroup.style.display = 'block';
+                    customCategoryInput.required = true;
+                }
+                
+                document.getElementById('title').value = subject.title;
+                document.getElementById('description').value = subject.description;
+                selectedColor = subject.color;
+                updateColorSelection();
+            } else {
+                // Novo assunto
+                modalTitle.textContent = 'Adicionar Novo Assunto';
+                form.reset();
+                document.getElementById('customCategoryGroup').style.display = 'none';
+                document.getElementById('customCategory').required = false;
+                selectedColor = '#7F66D9';
+                updateColorSelection();
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('subjectModal').style.display = 'none';
+            editingIndex = -1;
+        }
+
+        function setupColorPicker() {
+            const colorPicker = document.getElementById('colorPicker');
+            const colorHex = document.getElementById('colorHex');
+            
+            colorPicker.addEventListener('change', function() {
+                selectedColor = this.value;
+                colorHex.value = selectedColor;
+            });
+            
+            colorHex.addEventListener('input', function() {
+                const hexValue = this.value;
+                if (/^#[0-9A-F]{6}$/i.test(hexValue)) {
+                    selectedColor = hexValue;
+                    colorPicker.value = selectedColor;
+                }
+            });
+        }
+
+        function updateColorSelection() {
+            document.getElementById('colorPicker').value = selectedColor;
+            document.getElementById('colorHex').value = selectedColor;
+        }
+
+        document.getElementById('subjectForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const categorySelect = document.getElementById('category');
+            const customCategory = document.getElementById('customCategory');
+            const finalCategory = categorySelect.value === 'outros' ? customCategory.value : categorySelect.value;
+            
+            const subject = {
+                category: finalCategory,
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                color: selectedColor,
+                id: editingIndex >= 0 ? subjects[editingIndex].id : Date.now()
+            };
+
+            if (editingIndex >= 0) {
+                subjects[editingIndex] = subject;
+            } else {
+                subjects.push(subject);
+            }
+
+            localStorage.setItem('subjects', JSON.stringify(subjects));
+            loadSubjects();
+            closeModal();
+        });
+
+        function loadSubjects() {
+            const grid = document.getElementById('subjectsGrid');
+            grid.innerHTML = '';
+
+            subjects.forEach((subject, index) => {
+                const card = document.createElement('div');
+                card.className = 'subject-card';
+                card.innerHTML = `
+                    <div class="color-indicator" style="background-color: ${subject.color}"></div>
+                    <div class="subject-header">
+                        <span class="subject-category">${getCategoryName(subject.category)}</span>
+                        <div class="subject-actions">
+                            <button class="edit-btn" onclick="event.stopPropagation(); openModal(${index})" title="Editar">✏️</button>
+                            <button class="delete-btn" onclick="event.stopPropagation(); deleteSubject(${index})" title="Excluir">🗑️</button>
+                        </div>
+                    </div>
+                    <h3 class="subject-title">${subject.title}</h3>
+                `;
+                
+                card.addEventListener('click', () => openViewModal(index));
+                grid.appendChild(card);
+            });
+        }
+
+        function getCategoryName(category) {
+            const categories = {
+                'matematica': 'Matemática',
+                'historia': 'História',
+                'geografia': 'Geografia',
+                'ciencias': 'Ciências',
+                'portugues': 'Português',
+                'ingles': 'Inglês',
+                'fisica': 'Física',
+                'quimica': 'Química',
+                'biologia': 'Biologia',
+                'musica': 'Música',
+                'arte': 'Arte',
+                'trabalho': 'Trabalho',
+                'dever-casa': 'Dever de Casa',
+                'outros': 'Outros'
+            };
+            return categories[category] || category;
+        }
+
+        function deleteSubject(index) {
+            if (confirm('Tem certeza que deseja excluir este assunto?')) {
+                subjects.splice(index, 1);
+                localStorage.setItem('subjects', JSON.stringify(subjects));
+                loadSubjects();
+            }
+        }
+
+        function openViewModal(index) {
+            const subject = subjects[index];
+            const modal = document.getElementById('subjectViewModal');
+            const header = document.getElementById('viewHeader');
+            const title = document.getElementById('viewTitle');
+            const category = document.getElementById('viewCategory');
+            const description = document.getElementById('viewDescription');
+            
+            header.style.borderColor = subject.color;
+            title.textContent = subject.title;
+            category.textContent = getCategoryName(subject.category);
+            description.textContent = subject.description || 'Nenhuma descrição adicionada.';
+            
+            modal.style.display = 'block';
+        }
+        
+        function closeViewModal() {
+            document.getElementById('subjectViewModal').style.display = 'none';
+        }
+
+        // Fechar modal clicando fora dele
+        window.onclick = function(event) {
+            const modal = document.getElementById('subjectModal');
+            const viewModal = document.getElementById('subjectViewModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+            if (event.target === viewModal) {
+                closeViewModal();
+            }
+        }
+    </script>
+
+    <!-- Modal de Perfil -->
+    <div id="profileModal" style="display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+        <div style="background-color: white; margin: 3% auto; padding: 30px; border-radius: 15px; width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #7F66D9; padding-bottom: 15px;">
+                <h2 style="color: #7F66D9; margin: 0;">Meu Perfil</h2>
+                <span onclick="closeProfile()" style="color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+            </div>
+            
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div style="width: 80px; height: 80px; border-radius: 50%; background-color: #7F66D9; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 15px; color: white;">👤</div>
+                <button onclick="document.getElementById('photoInput').click()" style="background-color: #F2D46F; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">📷 Alterar Foto</button>
+                <input type="file" id="photoInput" accept="image/*" style="display: none;">
+            </div>
+            
+            <div style="display: grid; gap: 20px;">
+                <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
+                    <h3 style="color: #333; margin-bottom: 15px;">Informações da Conta</h3>
+                    <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+                    <p><strong>Conta criada em:</strong> <span id="profileCreated"></span></p>
+                </div>
+                
+                <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
+                    <h3 style="color: #333; margin-bottom: 15px;">Editar Informações</h3>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;">Novo Email:</label>
+                        <input type="email" id="editEmail" placeholder="Digite o novo email" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;">Nova Senha:</label>
+                        <input type="password" id="editPassword" placeholder="Digite a nova senha (mín. 6 caracteres)" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px;">
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="saveProfile()" style="flex: 1; background-color: #7F66D9; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 1rem;">Salvar Alterações</button>
+                        <button onclick="closeProfile()" style="flex: 1; background-color: #6c757d; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 1rem;">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

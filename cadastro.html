@@ -20,11 +20,11 @@
             <div class="nav-list">
                 <ul>
                     <li class="nav-item"><a href="index.html" class="nav-link">Início</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">Projetos</a></li>
+                    <li class="nav-item"><a href="recursos.html" class="nav-link">Recursos</a></li>
                     <li class="nav-item"><a href="#" class="nav-link"> Sobre</a></li>
                 </ul>
             </div>
-            <div class="login-button">
+            <div class="login-button" id="authButton">
                 <button><a href="cadastro.html">Entrar</a></button>
             </div>
 
@@ -35,11 +35,11 @@
         <div class="mobile-menu">
             <ul>
                 <li class="nav-item"><a href="index.html" class="nav-link">Início</a></li>
-                <li class="nav-item"><a href="#" class="nav-link">Projetos</a></li>
+                <li class="nav-item"><a href="recursos.html" class="nav-link">Recursos</a></li>
                 <li class="nav-item"><a href="#" class="nav-link">Feedback</a></li>
             </ul>
 
-            <div class="login-button">
+            <div class="login-button" id="authButtonMobile">
                 <button><a href="#">Entrar</a></button>
             </div>
         </div>
@@ -58,10 +58,10 @@
                 </a>
                 </div>
                 <span>registre com os seus dados pessoais</span>
-                <input type="text" placeholder="Name">
-                <input type="email" placeholder="Email">
-                <input type="password" placeholder="Password">
-                <button>CADASTRAR-SE</button>
+                <input type="text" placeholder="Name" required>
+                <input type="email" placeholder="Email" required>
+                <input type="password" placeholder="Password" required minlength="6">
+                <button type="submit">CADASTRAR-SE</button>
             </form>
         </div>
         <div class="form-container sign-in">
@@ -75,10 +75,10 @@
                 </div>
 
                 <span>entre com o seu email e senha</span>
-                <input type="email" placeholder="Email">
-                <input type="senha" placeholder="Senha">
+                <input type="email" placeholder="Email" required>
+                <input type="password" placeholder="Senha" required>
                 <a href="#">esqueceu sua senha?</a>
-                <button>LOGIN</button>
+                <button type="submit">LOGIN</button>
             </form>
         </div>
         <div class="toggle-container">

@@ -18,11 +18,11 @@
             <div class="nav-list">
                 <ul>
                     <li class="nav-item"><a href="#" class="nav-link">Início</a></li>
-                    <li class="nav-item"><a href="#recursos" class="nav-link">Recursos</a></li>
+                    <li class="nav-item"><a href="recursos.html" class="nav-link" onclick="return checkAuthBeforeAccess(event, 'recursos.html')">Recursos</a></li>
                     <li class="nav-item"><a href="#sobre" class="nav-link">Sobre</a></li>
                 </ul>
             </div>
-            <div class="login-button">
+            <div class="login-button" id="authButton">
                 <button><a href="cadastro.html">Entrar</a></button>
             </div>
 
@@ -33,11 +33,11 @@
         <div class="mobile-menu">
             <ul>
                 <li class="nav-item"><a href="#" class="nav-link">Início</a></li>
-                <li class="nav-item"><a href="#recursos" class="nav-link">Recursos</a></li>
+                <li class="nav-item"><a href="recursos.html" class="nav-link" onclick="return checkAuthBeforeAccess(event, 'recursos.html')">Recursos</a></li>
                 <li class="nav-item"><a href="#sobre" class="nav-link">Sobre</a></li>
             </ul>
 
-            <div class="login-button">
+            <div class="login-button" id="authButtonMobile">
                 <button><a href="cadastro.html">Entrar</a></button>
             </div>
         </div>
@@ -81,7 +81,7 @@
                 </div>
             </div>
             <div style="text-align: center; margin-top: 40px;">
-                <button class="primary-btn"><a href="recursos.html" style="color: white; text-decoration: none;">Acessar Todas as Ferramentas</a></button>
+                <button class="primary-btn"><a href="recursos.html" style="color: white; text-decoration: none;" onclick="return checkAuthBeforeAccess(event, 'recursos.html')">Acessar Todas as Ferramentas</a></button>
             </div>
         </section>
 
@@ -178,7 +178,50 @@
         </div>
     </footer>
 
-    <script src="assets/js/script.js"></script>
+    <!-- Modal de Perfil -->
+    <div id="profileModal" style="display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+        <div style="background-color: white; margin: 3% auto; padding: 30px; border-radius: 15px; width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #7F66D9; padding-bottom: 15px;">
+                <h2 style="color: #7F66D9; margin: 0;">Meu Perfil</h2>
+                <span onclick="closeProfile()" style="color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+            </div>
+            
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div style="width: 80px; height: 80px; border-radius: 50%; background-color: #7F66D9; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 15px; color: white;">👤</div>
+                <button onclick="document.getElementById('photoInput').click()" style="background-color: #F2D46F; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">📷 Alterar Foto</button>
+                <input type="file" id="photoInput" accept="image/*" style="display: none;">
+            </div>
+            
+            <div style="display: grid; gap: 20px;">
+                <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
+                    <h3 style="color: #333; margin-bottom: 15px;">Informações da Conta</h3>
+                    <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+                    <p><strong>Conta criada em:</strong> <span id="profileCreated"></span></p>
+                </div>
+                
+                <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
+                    <h3 style="color: #333; margin-bottom: 15px;">Editar Informações</h3>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;">Novo Email:</label>
+                        <input type="email" id="editEmail" placeholder="Digite o novo email" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;">Nova Senha:</label>
+                        <input type="password" id="editPassword" placeholder="Digite a nova senha (mín. 6 caracteres)" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px;">
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="saveProfile()" style="flex: 1; background-color: #7F66D9; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 1rem;">Salvar Alterações</button>
+                        <button onclick="closeProfile()" style="flex: 1; background-color: #6c757d; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 1rem;">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 
 </html>

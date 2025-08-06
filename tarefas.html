@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyBuddy - Lista de Tarefas</title>
+    <link rel="stylesheet" href="./index.css">
+    <style>
+        .tarefas-container {
+            background-color: #f9f9f9;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #7F66D9;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+        }
+
+        .add-task-btn {
+            background-color: #7F66D9;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-bottom: 30px;
+            transition: background-color 0.3s;
+        }
+
+        .add-task-btn:hover {
+            background-color: #6B52C7;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: #7F66D9;
+            border-radius: 10px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #7F66D9;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #7F66D9;
+        }
+
+        .time-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .save-btn {
+            background-color: #7F66D9;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .save-btn:hover {
+            background-color: #6B52C7;
+        }
+
+        .edit-btn, .delete-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .edit-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        .delete-btn:hover {
+            background-color: #ffe6e6;
+        }
+
+        .tasks-list {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+            gap: 15px;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-item-checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .task-item-checkbox.completed {
+            background-color: #2ed573;
+            border-color: #2ed573;
+            color: white;
+        }
+
+        .task-item-checkbox.completed::after {
+            content: '✓';
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .task-item-color {
+            width: 4px;
+            height: 30px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .task-item-content {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-item-info {
+            flex: 1;
+        }
+
+        .task-item-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .task-item-title.completed {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .task-item-description {
+            font-size: 0.9rem;
+            color: #888;
+            margin: 3px 0;
+            font-style: italic;
+        }
+
+        .task-item-meta {
+            font-size: 0.85rem;
+            color: #888;
+            display: flex;
+            gap: 15px;
+        }
+
+        .task-item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .logo img {
+            width: 80px;
+            height: 60px;
+        }
+        
+        header {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-bar {
+            padding: 0.5rem 4rem;
+        }
+        
+        .logo h1 {
+            margin: 0;
+            padding: 0;
+            font-size: inherit;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .category-section {
+            margin-bottom: 40px;
+        }
+
+        .category-header {
+            background-color: #7F66D9;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-config-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .category-config-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .category-tasks {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .category-tasks-list {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        @media screen and (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+
+            .task-item-meta {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="nav-bar">
+            <div class="logo">
+                <h1><img src="img/imagem.png" alt="Logo StudyBuddy"> </h1>
+            </div>
+            <div class="nav-list">
+                <ul>
+                    <li class="nav-item"><a href="index.html" class="nav-link">Início</a></li>
+                    <li class="nav-item"><a href="recursos.html" class="nav-link">Recursos</a></li>
+                    <li class="nav-item"><a href="index.html#sobre" class="nav-link">Sobre</a></li>
+                </ul>
+            </div>
+            <div class="login-button" id="authButton">
+                <button><a href="cadastro.html">Entrar</a></button>
+            </div>
+
+            <div class="mobile-menu-icon">
+                <button onclick="menuShow()"><img class="icon" src="assets/img/menu_white_36dp.svg" alt=""></button>
+            </div>
+        </nav>
+        <div class="mobile-menu">
+            <ul>
+                <li class="nav-item"><a href="index.html" class="nav-link">Início</a></li>
+                <li class="nav-item"><a href="recursos.html" class="nav-link">Recursos</a></li>
+                <li class="nav-item"><a href="index.html#sobre" class="nav-link">Sobre</a></li>
+            </ul>
+
+            <div class="login-button" id="authButtonMobile">
+                <button><a href="cadastro.html">Entrar</a></button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="tarefas-container">
+        <div class="container">
+            <h1>Lista de Tarefas</h1>
+            
+            <button class="add-task-btn" onclick="openModal()">+ Adicionar Nova Tarefa</button>
+            
+            <div id="tasksContainer">
+                <!-- Categorias serão adicionadas aqui dinamicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para adicionar/editar tarefa -->
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Adicionar Nova Tarefa</h2>
+            
+            <form id="taskForm">
+                <div class="form-group">
+                    <label for="category">Categoria:</label>
+                    <select id="category" required>
+                        <option value="">Selecione uma categoria</option>
+                        <option value="casa">Casa</option>
+                        <option value="trabalho">Trabalho</option>
+                        <option value="escola">Escola</option>
+                        <option value="estudo">Estudo</option>
+                        <option value="pessoal">Pessoal</option>
+                        <option value="saude">Saúde</option>
+                        <option value="outros">Outros</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="customCategoryGroup" style="display: none;">
+                    <label for="customCategory">Digite sua categoria:</label>
+                    <input type="text" id="customCategory" placeholder="Ex: Exercícios, Compras, etc." maxlength="30">
+                </div>
+
+                <div class="form-group">
+                    <label for="title">Título da Tarefa:</label>
+                    <input type="text" id="title" required maxlength="60">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Descrição (opcional):</label>
+                    <textarea id="description" rows="2" maxlength="25"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="time">Horário (opcional):</label>
+                    <input type="time" id="time">
+                </div>
+
+
+
+                <button type="submit" class="save-btn">Salvar Tarefa</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para configurar categoria -->
+    <div id="categoryConfigModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCategoryConfig()">&times;</span>
+            <h2 id="categoryConfigTitle">Configurar Categoria</h2>
+            
+            <form id="categoryConfigForm">
+                <div class="form-group">
+                    <label for="categoryColor">Cor da Categoria:</label>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <input type="color" id="categoryColorPicker" value="#7F66D9" style="width: 60px; height: 40px; border: none; border-radius: 8px; cursor: pointer;">
+                        <input type="text" id="categoryColorHex" value="#7F66D9" placeholder="#000000" maxlength="7" style="width: 100px; padding: 8px; border: 2px solid #ddd; border-radius: 8px; font-family: monospace;">
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="save-btn" style="flex: 1;">Salvar Configuração</button>
+                    <button type="button" class="save-btn" onclick="deleteCategory()" style="background-color: #ff4757; flex: 1;">Excluir Categoria</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+    <script>
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        let editingIndex = -1;
+        let categoryColors = JSON.parse(localStorage.getItem('categoryColors')) || {};
+        let currentCategory = '';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTasks();
+            setupCategoryHandler();
+            setupTimeHandler();
+        });
+
+        function getCategoryColor(category) {
+            if (categoryColors[category]) {
+                return categoryColors[category];
+            }
+            const defaultColors = {
+                'casa': '#ff6b6b',
+                'trabalho': '#3742fa',
+                'escola': '#ffa502',
+                'estudo': '#2ed573',
+                'pessoal': '#f093fb',
+                'saude': '#00d2d3'
+            };
+            return defaultColors[category] || '#7F66D9';
+        }
+
+        function openCategoryConfig(category) {
+            currentCategory = category;
+            const modal = document.getElementById('categoryConfigModal');
+            const title = document.getElementById('categoryConfigTitle');
+            const colorPicker = document.getElementById('categoryColorPicker');
+            const colorHex = document.getElementById('categoryColorHex');
+            
+            title.textContent = `Configurar ${getCategoryName(category)}`;
+            const currentColor = getCategoryColor(category);
+            colorPicker.value = currentColor;
+            colorHex.value = currentColor;
+            
+            modal.style.display = 'block';
+        }
+
+        function closeCategoryConfig() {
+            document.getElementById('categoryConfigModal').style.display = 'none';
+        }
+
+        document.getElementById('categoryColorPicker').addEventListener('change', function() {
+            document.getElementById('categoryColorHex').value = this.value;
+        });
+        
+        document.getElementById('categoryColorHex').addEventListener('input', function() {
+            const hexValue = this.value;
+            if (/^#[0-9A-F]{6}$/i.test(hexValue)) {
+                document.getElementById('categoryColorPicker').value = hexValue;
+            }
+        });
+
+        document.getElementById('categoryConfigForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const newColor = document.getElementById('categoryColorPicker').value;
+            categoryColors[currentCategory] = newColor;
+            localStorage.setItem('categoryColors', JSON.stringify(categoryColors));
+            
+            // Atualizar cor das tarefas existentes desta categoria
+            tasks.forEach(task => {
+                if (task.category === currentCategory) {
+                    task.color = newColor;
+                }
+            });
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            
+            loadTasks();
+            closeCategoryConfig();
+        });
+
+        function deleteCategory() {
+            const categoryName = getCategoryName(currentCategory);
+            const tasksCount = tasks.filter(task => task.category === currentCategory).length;
+            
+            if (confirm(`Tem certeza que deseja excluir a categoria "${categoryName}"?\n\nIsso irá excluir ${tasksCount} tarefa(s) desta categoria.`)) {
+                // Remover todas as tarefas da categoria
+                tasks = tasks.filter(task => task.category !== currentCategory);
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                
+                // Remover configuração de cor da categoria
+                delete categoryColors[currentCategory];
+                localStorage.setItem('categoryColors', JSON.stringify(categoryColors));
+                
+                loadTasks();
+                closeCategoryConfig();
+            }
+        }
+
+        function setupCategoryHandler() {
+            const categorySelect = document.getElementById('category');
+            const customCategoryGroup = document.getElementById('customCategoryGroup');
+            const customCategoryInput = document.getElementById('customCategory');
+            
+            categorySelect.addEventListener('change', function() {
+                if (this.value === 'outros') {
+                    customCategoryGroup.style.display = 'block';
+                    customCategoryInput.required = true;
+                } else {
+                    customCategoryGroup.style.display = 'none';
+                    customCategoryInput.required = false;
+                    customCategoryInput.value = '';
+                }
+            });
+        }
+
+        function setupTimeHandler() {
+            // Função removida - apenas horário padrão agora
+        }
+
+        function openModal(index = -1) {
+            const modal = document.getElementById('taskModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const form = document.getElementById('taskForm');
+            
+            editingIndex = index;
+            
+            if (index >= 0) {
+                modalTitle.textContent = 'Editar Tarefa';
+                const task = tasks[index];
+                const categorySelect = document.getElementById('category');
+                const customCategoryGroup = document.getElementById('customCategoryGroup');
+                const customCategoryInput = document.getElementById('customCategory');
+                
+                const predefinedCategories = ['casa', 'trabalho', 'escola', 'estudo', 'pessoal', 'saude'];
+                
+                if (predefinedCategories.includes(task.category)) {
+                    categorySelect.value = task.category;
+                    customCategoryGroup.style.display = 'none';
+                } else {
+                    categorySelect.value = 'outros';
+                    customCategoryInput.value = task.category;
+                    customCategoryGroup.style.display = 'block';
+                    customCategoryInput.required = true;
+                }
+                
+                document.getElementById('title').value = task.title;
+                document.getElementById('description').value = task.description;
+                
+                if (task.time !== 'Sem horário') {
+                    document.getElementById('time').value = task.time;
+                }
+            } else {
+                modalTitle.textContent = 'Adicionar Nova Tarefa';
+                form.reset();
+                document.getElementById('customCategoryGroup').style.display = 'none';
+                document.getElementById('customCategory').required = false;
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('taskModal').style.display = 'none';
+            editingIndex = -1;
+        }
+
+
+
+        document.getElementById('taskForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const categorySelect = document.getElementById('category');
+            const customCategory = document.getElementById('customCategory');
+            const finalCategory = categorySelect.value === 'outros' ? customCategory.value : categorySelect.value;
+            
+            const timeInput = document.getElementById('time').value;
+            const finalTime = timeInput || 'Sem horário';
+            
+            const task = {
+                category: finalCategory,
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value || '',
+                time: finalTime,
+                color: getCategoryColor(finalCategory),
+                completed: editingIndex >= 0 ? tasks[editingIndex].completed : false,
+                id: editingIndex >= 0 ? tasks[editingIndex].id : Date.now()
+            };
+
+            if (editingIndex >= 0) {
+                tasks[editingIndex] = task;
+            } else {
+                tasks.push(task);
+            }
+
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            loadTasks();
+            closeModal();
+        });
+
+        function loadTasks() {
+            const container = document.getElementById('tasksContainer');
+            container.innerHTML = '';
+            
+            // Agrupar tarefas por categoria
+            const tasksByCategory = {};
+            tasks.forEach((task, index) => {
+                if (!tasksByCategory[task.category]) {
+                    tasksByCategory[task.category] = [];
+                }
+                tasksByCategory[task.category].push({...task, originalIndex: index});
+            });
+            
+            // Criar seções para cada categoria
+            Object.keys(tasksByCategory).forEach(category => {
+                const categoryTasks = tasksByCategory[category];
+                const section = document.createElement('div');
+                section.className = 'category-section';
+                
+                const header = document.createElement('div');
+                header.className = 'category-header';
+                header.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span>${getCategoryIcon(category)}</span>
+                        <span>${getCategoryName(category)} (${categoryTasks.length})</span>
+                    </div>
+                    <button class="category-config-btn" onclick="openCategoryConfig('${category}')" title="Configurar categoria">⚙️</button>
+                `;
+                header.style.backgroundColor = getCategoryColor(category);
+                
+                const tasksContainer = document.createElement('div');
+                tasksContainer.className = 'category-tasks';
+                
+                categoryTasks.forEach(task => {
+                    const taskElement = document.createElement('div');
+                    taskElement.className = 'task-item';
+                    taskElement.innerHTML = `
+                        <div class="task-item-checkbox ${task.completed ? 'completed' : ''}" onclick="toggleTask(${task.originalIndex})"></div>
+                        <div class="task-item-color" style="background-color: ${task.color}"></div>
+                        <div class="task-item-content">
+                            <div class="task-item-info">
+                                <div class="task-item-title ${task.completed ? 'completed' : ''}">${task.title}</div>
+                                ${task.description ? `<div class="task-item-description">${task.description}</div>` : ''}
+                                <div class="task-item-meta">
+                                    ${task.time !== 'Sem horário' ? `<span>${task.time}</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="task-item-actions">
+                                <button class="edit-btn" onclick="openModal(${task.originalIndex})" title="Editar">✏️</button>
+                                <button class="delete-btn" onclick="deleteTask(${task.originalIndex})" title="Excluir">🗑️</button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    tasksContainer.appendChild(taskElement);
+                });
+                
+                section.appendChild(header);
+                section.appendChild(tasksContainer);
+                container.appendChild(section);
+            });
+        }
+
+
+        
+        function getCategoryIcon(category) {
+            const icons = {
+                'casa': '🏠',
+                'trabalho': '💼',
+                'escola': '🏫',
+                'estudo': '📚',
+                'pessoal': '👤',
+                'saude': '⚕️'
+            };
+            return icons[category] || '📋';
+        }
+
+        function getCategoryName(category) {
+            const categories = {
+                'casa': 'Casa',
+                'trabalho': 'Trabalho',
+                'escola': 'Escola',
+                'estudo': 'Estudo',
+                'pessoal': 'Pessoal',
+                'saude': 'Saúde'
+            };
+            return categories[category] || category;
+        }
+
+        function toggleTask(index) {
+            tasks[index].completed = !tasks[index].completed;
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            loadTasks();
+        }
+
+        function deleteTask(index) {
+            if (confirm('Tem certeza que deseja excluir esta tarefa?')) {
+                tasks.splice(index, 1);
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                loadTasks();
+            }
+        }
+
+        window.onclick = function(event) {
+            const taskModal = document.getElementById('taskModal');
+            const categoryModal = document.getElementById('categoryConfigModal');
+            if (event.target === taskModal) {
+                closeModal();
+            }
+            if (event.target === categoryModal) {
+                closeCategoryConfig();
+            }
+        }
+    </script>
+
+    <!-- Modal de Perfil -->
+    <div id="profileModal" style="display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+        <div style="background-color: white; margin: 3% auto; padding: 30px; border-radius: 15px; width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #7F66D9; padding-bottom: 15px;">
+                <h2 style="color: #7F66D9; margin: 0;">Meu Perfil</h2>
+                <span onclick="closeProfile()" style="color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+            </div>
+            
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div style="width: 80px; height: 80px; border-radius: 50%; background-color: #7F66D9; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 15px; color: white;">👤</div>
+                <button onclick="document.getElementById('photoInput').click()" style="background-color: #F2D46F; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">📷 Alterar Foto</button>
+                <input type="file" id="photoInput" accept="image/*" style="display: none;">
+            </div>
+            
+            <div style="display: grid; gap: 20px;">
+                <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
+                    <h3 style="color: #333; margin-bottom: 15px;">Informações da Conta</h3>
+                    <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+                    <p><strong>Conta criada em:</strong> <span id="profileCreated"></span></p>
+                </div>
+                
+                <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
+                    <h3 style="color: #333; margin-bottom: 15px;">Editar Informações</h3>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;">Novo Email:</label>
+                        <input type="email" id="editEmail" placeholder="Digite o novo email" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;">Nova Senha:</label>
+                        <input type="password" id="editPassword" placeholder="Digite a nova senha (mín. 6 caracteres)" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px;">
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="saveProfile()" style="flex: 1; background-color: #7F66D9; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 1rem;">Salvar Alterações</button>
+                        <button onclick="closeProfile()" style="flex: 1; background-color: #6c757d; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 1rem;">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

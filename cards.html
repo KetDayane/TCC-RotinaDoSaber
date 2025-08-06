@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyBuddy - Cards de Estudo</title>
+    <link rel="stylesheet" href="./index.css">
+    <style>
+        .cards-container {
+            background-color: #f9f9f9;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #7F66D9;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background-color: #7F66D9;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #6B52C7;
+        }
+
+        .btn-secondary {
+            background-color: #F2D46F;
+        }
+
+        .btn-secondary:hover {
+            background-color: #E6C563;
+        }
+
+        .card-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .flashcard {
+            width: 400px;
+            height: 250px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .card-inner.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            font-size: 1.2rem;
+            line-height: 1.5;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #7F66D9, #B5A9F9);
+            color: white;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #F2D46F, #FFE066);
+            color: #333;
+            transform: rotateY(180deg);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #7F66D9;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #7F66D9;
+        }
+
+        .save-btn {
+            background-color: #7F66D9;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .save-btn:hover {
+            background-color: #6B52C7;
+        }
+
+        .cards-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .card-item {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .card-content {
+            flex: 1;
+        }
+
+        .card-question {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .card-answer {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .study-mode {
+            text-align: center;
+        }
+
+        .card-counter {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .study-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .logo img {
+            width: 80px;
+            height: 60px;
+        }
+        
+        header {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-bar {
+            padding: 0.5rem 4rem;
+        }
+        
+        .logo h1 {
+            margin: 0;
+            padding: 0;
+            font-size: inherit;
+        }
+
+        @media screen and (max-width: 768px) {
+            .flashcard {
+                width: 320px;
+                height: 200px;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="nav-bar">
+            <div class="logo">
+                <h1><img src="img/imagem.png" alt="Logo StudyBuddy"> </h1>
+            </div>
+            <div class="nav-list">
+                <ul>
+                    <li class="nav-item"><a href="index.html" class="nav-link">Início</a></li>
+                    <li class="nav-item"><a href="recursos.html" class="nav-link">Recursos</a></li>
+                    <li class="nav-item"><a href="index.html#sobre" class="nav-link">Sobre</a></li>
+                </ul>
+            </div>
+            <div class="login-button" id="authButton">
+                <button><a href="cadastro.html">Entrar</a></button>
+            </div>
+
+            <div class="mobile-menu-icon">
+                <button onclick="menuShow()"><img class="icon" src="assets/img/menu_white_36dp.svg" alt=""></button>
+            </div>
+        </nav>
+        <div class="mobile-menu">
+            <ul>
+                <li class="nav-item"><a href="index.html" class="nav-link">Início</a></li>
+                <li class="nav-item"><a href="recursos.html" class="nav-link">Recursos</a></li>
+                <li class="nav-item"><a href="index.html#sobre" class="nav-link">Sobre</a></li>
+            </ul>
+
+            <div class="login-button" id="authButtonMobile">
+                <button><a href="cadastro.html">Entrar</a></button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="cards-container">
+        <div class="container">
+            <h1>Cards de Estudo</h1>
+            
+            <div class="controls">
+                <button class="btn" onclick="openModal()">+ Criar Card</button>
+                <button class="btn btn-secondary" onclick="startStudy()" id="studyBtn">🎯 Iniciar Estudo</button>
+                <button class="btn" onclick="openManageModal()" style="background-color: #e74c3c;">🗑️ Gerenciar Cards</button>
+            </div>
+            
+            <div id="createMode">
+                <div class="card-container">
+                    <div class="flashcard" onclick="flipCard()">
+                        <div class="card-inner" id="cardInner">
+                            <div class="card-front">
+                                <p>Clique para criar seu primeiro card!</p>
+                            </div>
+                            <div class="card-back">
+                                <p>Adicione perguntas e respostas para estudar</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="studyMode" class="study-mode" style="display: none;">
+                <div class="card-counter" id="cardCounter">Card 1 de 0</div>
+                
+                <div class="card-container">
+                    <div class="flashcard" onclick="flipStudyCard()">
+                        <div class="card-inner" id="studyCardInner">
+                            <div class="card-front" id="studyCardFront">
+                                <p>Pergunta aparecerá aqui</p>
+                            </div>
+                            <div class="card-back" id="studyCardBack">
+                                <p>Resposta aparecerá aqui</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="study-controls">
+                    <button class="btn" onclick="previousCard()">⬅️ Anterior</button>
+                    <button class="btn" onclick="nextCard()">Próximo ➡️</button>
+                    <button class="btn btn-secondary" onclick="endStudy()">🏠 Voltar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para criar card -->
+    <div id="cardModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Criar Novo Card</h2>
+            
+            <form id="cardForm">
+                <div class="form-group">
+                    <label for="question">Pergunta:</label>
+                    <textarea id="question" placeholder="Digite sua pergunta aqui..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="answer">Resposta:</label>
+                    <textarea id="answer" placeholder="Digite a resposta aqui..." required></textarea>
+                </div>
+
+                <button type="submit" class="save-btn">Salvar Card</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para gerenciar cards -->
+    <div id="manageModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeManageModal()">&times;</span>
+            <h2>Gerenciar Cards</h2>
+            
+            <div id="cardsList" class="cards-list">
+                <!-- Cards serão listados aqui -->
+            </div>
+            
+            <button class="btn" onclick="closeManageModal()">Fechar</button>
+        </div>
+    </div>
+
+    <!-- Modal de Perfil -->
+    <div id="profileModal" style="display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+        <div style="background-color: white; margin: 3% auto; padding: 30px; border-radius: 15px; width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #7F66D9; padding-bottom: 15px;">
+                <h2 style="color: #7F66D9; margin: 0;">Meu Perfil</h2>
+                <span onclick="closeProfile()" style="color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+            </div>
+            
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div style="width: 80px; height: 80px; border-radius: 50%; background-color: #7F66D9; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 15px; color: white;">👤</div>
+                <button onclick="document.getElementById('photoInput').click()" style="background-color: #F2D46F; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">📷 Alterar Foto</button>
+                <input type="file" id="photoInput" accept="image/*" style="display: none;">
+            </div>
+            
+            <div style="display: grid; gap: 20px;">
+                <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
+                    <h3 style="color: #333; margin-bottom: 15px;">Informações da Conta</h3>
+                    <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+                    <p><strong>Conta criada em:</strong> <span id="profileCreated"></span></p>
+                </div>
+                
+                <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
+                    <h3 style="color: #333; margin-bottom: 15px;">Editar Informações</h3>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;">Novo Email:</label>
+                        <input type="email" id="editEmail" placeholder="Digite o novo email" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;">Nova Senha:</label>
+                        <input type="password" id="editPassword" placeholder="Digite a nova senha (mín. 6 caracteres)" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px;">
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="saveProfile()" style="flex: 1; background-color: #7F66D9; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 1rem;">Salvar Alterações</button>
+                        <button onclick="closeProfile()" style="flex: 1; background-color: #6c757d; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 1rem;">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+    <script>
+        let cards = JSON.parse(localStorage.getItem('studyCards')) || [];
+        let currentCardIndex = 0;
+        let isStudyMode = false;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStudyButton();
+        });
+
+        function flipCard() {
+            if (!isStudyMode) {
+                document.getElementById('cardInner').classList.toggle('flipped');
+            }
+        }
+
+        function flipStudyCard() {
+            if (isStudyMode) {
+                document.getElementById('studyCardInner').classList.toggle('flipped');
+            }
+        }
+
+        function openModal() {
+            document.getElementById('cardModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('cardModal').style.display = 'none';
+            document.getElementById('cardForm').reset();
+        }
+
+        function openManageModal() {
+            document.getElementById('manageModal').style.display = 'block';
+            loadCardsList();
+        }
+
+        function closeManageModal() {
+            document.getElementById('manageModal').style.display = 'none';
+        }
+
+        function loadCardsList() {
+            const cardsList = document.getElementById('cardsList');
+            
+            if (cards.length === 0) {
+                cardsList.innerHTML = '<p style="text-align: center; color: #666;">Nenhum card criado ainda.</p>';
+                return;
+            }
+            
+            cardsList.innerHTML = cards.map(card => `
+                <div class="card-item">
+                    <div class="card-content">
+                        <div class="card-question">${card.question}</div>
+                        <div class="card-answer">${card.answer}</div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteCard(${card.id})">🗑️ Excluir</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteCard(cardId) {
+            if (confirm('Tem certeza que deseja excluir este card?')) {
+                cards = cards.filter(card => card.id !== cardId);
+                localStorage.setItem('studyCards', JSON.stringify(cards));
+                loadCardsList();
+                updateStudyButton();
+            }
+        }
+
+        document.getElementById('cardForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const question = document.getElementById('question').value;
+            const answer = document.getElementById('answer').value;
+            
+            const card = {
+                question: question,
+                answer: answer,
+                id: Date.now()
+            };
+
+            cards.push(card);
+            localStorage.setItem('studyCards', JSON.stringify(cards));
+            
+            updateStudyButton();
+            closeModal();
+            
+            alert('Card criado com sucesso!');
+        });
+
+        function updateStudyButton() {
+            const studyBtn = document.getElementById('studyBtn');
+            if (cards.length > 0) {
+                studyBtn.textContent = `🎯 Iniciar Estudo (${cards.length} cards)`;
+                studyBtn.disabled = false;
+            } else {
+                studyBtn.textContent = '🎯 Iniciar Estudo';
+                studyBtn.disabled = false;
+            }
+        }
+
+        function startStudy() {
+            if (cards.length === 0) {
+                alert('Crie pelo menos um card antes de iniciar o estudo!');
+                return;
+            }
+            
+            isStudyMode = true;
+            currentCardIndex = 0;
+            
+            document.getElementById('createMode').style.display = 'none';
+            document.getElementById('studyMode').style.display = 'block';
+            
+            loadCurrentCard();
+        }
+
+        function loadCurrentCard() {
+            if (cards.length === 0) return;
+            
+            const card = cards[currentCardIndex];
+            const counter = document.getElementById('cardCounter');
+            const front = document.getElementById('studyCardFront');
+            const back = document.getElementById('studyCardBack');
+            const cardInner = document.getElementById('studyCardInner');
+            
+            counter.textContent = `Card ${currentCardIndex + 1} de ${cards.length}`;
+            front.innerHTML = `<p>${card.question}</p>`;
+            back.innerHTML = `<p>${card.answer}</p>`;
+            
+            // Reset flip
+            cardInner.classList.remove('flipped');
+        }
+
+        function nextCard() {
+            if (currentCardIndex < cards.length - 1) {
+                currentCardIndex++;
+                loadCurrentCard();
+            }
+        }
+
+        function previousCard() {
+            if (currentCardIndex > 0) {
+                currentCardIndex--;
+                loadCurrentCard();
+            }
+        }
+
+        function endStudy() {
+            isStudyMode = false;
+            document.getElementById('studyMode').style.display = 'none';
+            document.getElementById('createMode').style.display = 'block';
+            
+            // Reset main card
+            const mainCard = document.getElementById('cardInner');
+            mainCard.classList.remove('flipped');
+        }
+
+        window.onclick = function(event) {
+            const cardModal = document.getElementById('cardModal');
+            const manageModal = document.getElementById('manageModal');
+            
+            if (event.target === cardModal) {
+                closeModal();
+            }
+            if (event.target === manageModal) {
+                closeManageModal();
+            }
+        }
+    </script>
+</body>
+</html>
