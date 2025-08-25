@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyBuddy - Assuntos</title>
+    <title>Rotina do Saber - Assuntos</title>
     <link rel="stylesheet" href="./index.css">
     <style>
         .assuntos-container {
@@ -264,8 +264,29 @@
             max-width: 800px;
             max-height: 90vh;
             overflow-y: auto;
+            overflow-x: hidden;
             position: relative;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            word-wrap: break-word;
+            white-space: normal;
+        }
+
+        .subject-view-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .subject-view-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .subject-view-content::-webkit-scrollbar-thumb {
+            background: #7F66D9;
+            border-radius: 10px;
+        }
+
+        .subject-view-content::-webkit-scrollbar-thumb:hover {
+            background: #6B52C7;
         }
 
         .subject-view-header {
@@ -295,6 +316,9 @@
             line-height: 1.8;
             color: #555;
             white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
         }
 
         .subject-view-close {
@@ -401,7 +425,7 @@
     <header>
         <nav class="nav-bar">
             <div class="logo">
-                <h1><img src="img/imagem.png" alt="Logo StudyBuddy"> </h1>
+                <h1><img src="img/imagem.png" alt="Logo Rotina do Saber"> </h1>
             </div>
             <div class="nav-list">
                 <ul>
