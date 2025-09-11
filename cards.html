@@ -244,6 +244,85 @@
             margin-top: 30px;
         }
 
+        .timer-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .timer-display {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #7F66D9;
+            margin-bottom: 10px;
+        }
+
+        .timer-config {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .config-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .config-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .config-label {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .time-selector, .difficulty-selector {
+            display: flex;
+            gap: 10px;
+        }
+
+        .time-btn, .difficulty-btn {
+            padding: 8px 16px;
+            border: 2px solid #7F66D9;
+            background-color: white;
+            color: #7F66D9;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .time-btn.active, .difficulty-btn.active {
+            background-color: #7F66D9;
+            color: white;
+        }
+
+        .time-btn:hover, .difficulty-btn:hover {
+            background-color: #7F66D9;
+            color: white;
+        }
+
+        .timer-warning {
+            color: #e74c3c;
+            font-weight: bold;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
         .logo img {
             width: 80px;
             height: 60px;
@@ -317,8 +396,40 @@
             
             <div class="controls">
                 <button class="btn" onclick="openModal()">+ Criar Card</button>
-                <button class="btn btn-secondary" onclick="startStudy()" id="studyBtn">🎯 Iniciar Estudo</button>
+                <button class="btn btn-secondary" onclick="openTimerConfig()" id="studyBtn">🎯 Iniciar Estudo</button>
                 <button class="btn" onclick="openManageModal()" style="background-color: #e74c3c;">🗑️ Gerenciar Cards</button>
+            </div>
+            
+            <div id="timerConfig" style="display: none;">
+                <div class="timer-config">
+                    <h2 style="text-align: center; color: #7F66D9; margin-bottom: 30px;">⏱️ Configurar Temporizador</h2>
+                    
+                    <div class="config-row">
+                        <div class="config-group">
+                            <div class="config-label">Tempo por Card:</div>
+                            <div class="time-selector">
+                                <button class="time-btn" onclick="selectTime(30)">30s</button>
+                                <button class="time-btn active" onclick="selectTime(60)">1min</button>
+                                <button class="time-btn" onclick="selectTime(120)">2min</button>
+                                <button class="time-btn" onclick="selectTime(300)">5min</button>
+                            </div>
+                        </div>
+                        
+                        <div class="config-group">
+                            <div class="config-label">Dificuldade:</div>
+                            <div class="difficulty-selector">
+                                <button class="difficulty-btn" onclick="selectDifficulty('facil')">😊 Fácil</button>
+                                <button class="difficulty-btn active" onclick="selectDifficulty('medio')">😐 Médio</button>
+                                <button class="difficulty-btn" onclick="selectDifficulty('dificil')">😤 Difícil</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button class="btn" onclick="startStudyWithTimer()" style="margin-right: 15px;">🚀 Começar Estudo</button>
+                        <button class="btn btn-secondary" onclick="closeTimerConfig()">❌ Cancelar</button>
+                    </div>
+                </div>
             </div>
             
             <div id="createMode">
@@ -337,6 +448,11 @@
             </div>
             
             <div id="studyMode" class="study-mode" style="display: none;">
+                <div class="timer-container">
+                    <div class="timer-display" id="timerDisplay">01:00</div>
+                    <div style="font-size: 0.9rem; color: #666;" id="difficultyDisplay">Dificuldade: Médio</div>
+                </div>
+                
                 <div class="card-counter" id="cardCounter">Card 1 de 0</div>
                 
                 <div class="card-container">
@@ -445,6 +561,11 @@
         let cards = JSON.parse(localStorage.getItem('studyCards')) || [];
         let currentCardIndex = 0;
         let isStudyMode = false;
+        let timerInterval = null;
+        let timePerCard = 60; // segundos
+        let currentTime = 60;
+        let difficulty = 'medio';
+        let autoAdvance = false;
 
         document.addEventListener('DOMContentLoaded', function() {
             updateStudyButton();
@@ -540,19 +661,114 @@
             }
         }
 
-        function startStudy() {
+        function openTimerConfig() {
             if (cards.length === 0) {
                 alert('Crie pelo menos um card antes de iniciar o estudo!');
                 return;
             }
             
+            document.getElementById('timerConfig').style.display = 'block';
+        }
+        
+        function closeTimerConfig() {
+            document.getElementById('timerConfig').style.display = 'none';
+        }
+        
+        function selectTime(seconds) {
+            timePerCard = seconds;
+            currentTime = seconds;
+            
+            document.querySelectorAll('.time-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        function selectDifficulty(level) {
+            difficulty = level;
+            
+            // Configurar auto-advance baseado na dificuldade
+            switch(level) {
+                case 'facil':
+                    autoAdvance = false;
+                    break;
+                case 'medio':
+                    autoAdvance = false;
+                    break;
+                case 'dificil':
+                    autoAdvance = true;
+                    break;
+            }
+            
+            document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        function startStudyWithTimer() {
             isStudyMode = true;
             currentCardIndex = 0;
+            currentTime = timePerCard;
             
+            document.getElementById('timerConfig').style.display = 'none';
             document.getElementById('createMode').style.display = 'none';
             document.getElementById('studyMode').style.display = 'block';
             
+            updateDifficultyDisplay();
             loadCurrentCard();
+            startTimer();
+        }
+        
+        function updateDifficultyDisplay() {
+            const difficultyNames = {
+                'facil': '😊 Fácil',
+                'medio': '😐 Médio',
+                'dificil': '😤 Difícil'
+            };
+            
+            document.getElementById('difficultyDisplay').textContent = 
+                `Dificuldade: ${difficultyNames[difficulty]}`;
+        }
+        
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                currentTime--;
+                updateTimerDisplay();
+                
+                if (currentTime <= 0) {
+                    if (autoAdvance && difficulty === 'dificil') {
+                        // No modo difícil, avança automaticamente
+                        nextCard();
+                    } else {
+                        // Nos outros modos, apenas alerta
+                        clearInterval(timerInterval);
+                        alert('Tempo esgotado! Clique em "Próximo" para continuar.');
+                    }
+                }
+            }, 1000);
+        }
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(currentTime / 60);
+            const seconds = currentTime % 60;
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            const timerElement = document.getElementById('timerDisplay');
+            timerElement.textContent = display;
+            
+            // Adicionar aviso visual quando restam 10 segundos
+            if (currentTime <= 10 && currentTime > 0) {
+                timerElement.classList.add('timer-warning');
+            } else {
+                timerElement.classList.remove('timer-warning');
+            }
+        }
+        
+        function resetTimer() {
+            currentTime = timePerCard;
+            updateTimerDisplay();
+            if (isStudyMode) {
+                startTimer();
+            }
         }
 
         function loadCurrentCard() {
@@ -576,6 +792,12 @@
             if (currentCardIndex < cards.length - 1) {
                 currentCardIndex++;
                 loadCurrentCard();
+                resetTimer();
+            } else {
+                // Fim do estudo
+                clearInterval(timerInterval);
+                alert('Parabéns! Você terminou todos os cards!');
+                endStudy();
             }
         }
 
@@ -583,11 +805,19 @@
             if (currentCardIndex > 0) {
                 currentCardIndex--;
                 loadCurrentCard();
+                resetTimer();
             }
         }
 
         function endStudy() {
             isStudyMode = false;
+            
+            // Parar timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            
             document.getElementById('studyMode').style.display = 'none';
             document.getElementById('createMode').style.display = 'block';
             
