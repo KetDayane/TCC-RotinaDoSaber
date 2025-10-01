@@ -154,6 +154,11 @@ function redirectAfterLogin() {
 
 // Verificar autenticação antes de acessar links
 function checkAuthBeforeAccess(event, targetUrl) {
+    // Permitir acesso ao "Sobre" sem login
+    if (targetUrl === 'index.html#sobre' || targetUrl.includes('#sobre')) {
+        return true;
+    }
+    
     if (!isLoggedIn()) {
         event.preventDefault();
         localStorage.setItem('redirectAfterLogin', targetUrl);
@@ -234,6 +239,13 @@ document.addEventListener('DOMContentLoaded', function() {
         window.location.pathname.includes('tarefas.html') ||
         window.location.pathname.includes('planner.html') ||
         window.location.pathname.includes('cards.html')) {
+        
+        // Permitir acesso à recursos.html apenas se vier com parâmetro especial
+        if (window.location.pathname.includes('recursos.html') && 
+            (window.location.search.includes('from=sobre') || sessionStorage.getItem('allowResourcesAccess'))) {
+            return; // Permitir acesso
+        }
+        
         if (!checkAuthAndRedirect()) {
             return;
         }

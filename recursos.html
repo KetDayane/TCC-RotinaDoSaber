@@ -218,5 +218,23 @@
     </div>
 
     <script src="script.js"></script>
+    <script>
+        // Interceptar cliques no link Sobre para permitir acesso temporário
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('a');
+            if (link && link.getAttribute('href') === 'index.html#sobre') {
+                // Marcar que o usuário pode acessar recursos temporariamente
+                sessionStorage.setItem('allowResourcesAccess', 'true');
+                window.location.href = 'index.html#sobre';
+                e.preventDefault();
+                return false;
+            }
+        }, true);
+        
+        // Limpar permissão quando sair da página
+        window.addEventListener('beforeunload', function() {
+            sessionStorage.removeItem('allowResourcesAccess');
+        });
+    </script>
 </body>
 </html>
