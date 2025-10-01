@@ -14,7 +14,8 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    height: 90vh;
+    min-height: calc(100vh - 80px);
+    padding: 20px 0;
 }
 
 .container{

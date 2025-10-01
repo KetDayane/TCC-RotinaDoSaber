@@ -34,7 +34,7 @@ header {
 .nav-bar {
     display: flex;
     justify-content: space-between;
-    padding: 0.5rem 4rem;
+    padding: 0.3rem 4rem;
 }
 
 .logo {
@@ -44,6 +44,11 @@ header {
 
 .logo h1 {
     color: #fff;
+}
+
+.logo img {
+    width: 150px;
+    height: 120px;
 }
 
 .nav-list {

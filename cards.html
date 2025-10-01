@@ -291,7 +291,7 @@
             gap: 10px;
         }
 
-        .time-btn, .difficulty-btn {
+        .time-btn {
             padding: 8px 16px;
             border: 2px solid #7F66D9;
             background-color: white;
@@ -301,13 +301,55 @@
             transition: all 0.3s;
         }
 
-        .time-btn.active, .difficulty-btn.active {
+        .time-btn.active {
             background-color: #7F66D9;
             color: white;
         }
 
-        .time-btn:hover, .difficulty-btn:hover {
+        .time-btn:hover {
             background-color: #7F66D9;
+            color: white;
+        }
+
+        .difficulty-btn {
+            padding: 8px 16px;
+            border: 2px solid;
+            background-color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .difficulty-btn[onclick*="facil"] {
+            border-color: #28a745;
+            color: #28a745;
+        }
+
+        .difficulty-btn[onclick*="facil"]:hover,
+        .difficulty-btn[onclick*="facil"].active {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .difficulty-btn[onclick*="medio"] {
+            border-color: #fd7e14;
+            color: #fd7e14;
+        }
+
+        .difficulty-btn[onclick*="medio"]:hover,
+        .difficulty-btn[onclick*="medio"].active {
+            background-color: #fd7e14;
+            color: white;
+        }
+
+        .difficulty-btn[onclick*="dificil"] {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+
+        .difficulty-btn[onclick*="dificil"]:hover,
+        .difficulty-btn[onclick*="dificil"].active {
+            background-color: #dc3545;
             color: white;
         }
 
@@ -353,6 +395,16 @@
                 width: 95%;
                 margin: 10% auto;
             }
+            
+            .config-row {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .time-selector, .difficulty-selector {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -360,7 +412,7 @@
     <header>
         <nav class="nav-bar">
             <div class="logo">
-                <h1><img src="img/imagem.png" alt="Logo Rotina do Saber"> </h1>
+                <h1><img src="img/Logo da Rotina do Saber.png" alt="Logo Rotina do Saber" style="width: 80px; height: auto;"></h1>
             </div>
             <div class="nav-list">
                 <ul>
@@ -396,40 +448,8 @@
             
             <div class="controls">
                 <button class="btn" onclick="openModal()">+ Criar Card</button>
-                <button class="btn btn-secondary" onclick="openTimerConfig()" id="studyBtn">🎯 Iniciar Estudo</button>
+                <button class="btn btn-secondary" onclick="startStudy()" id="studyBtn">🎯 Iniciar Estudo</button>
                 <button class="btn" onclick="openManageModal()" style="background-color: #e74c3c;">🗑️ Gerenciar Cards</button>
-            </div>
-            
-            <div id="timerConfig" style="display: none;">
-                <div class="timer-config">
-                    <h2 style="text-align: center; color: #7F66D9; margin-bottom: 30px;">⏱️ Configurar Temporizador</h2>
-                    
-                    <div class="config-row">
-                        <div class="config-group">
-                            <div class="config-label">Tempo por Card:</div>
-                            <div class="time-selector">
-                                <button class="time-btn" onclick="selectTime(30)">30s</button>
-                                <button class="time-btn active" onclick="selectTime(60)">1min</button>
-                                <button class="time-btn" onclick="selectTime(120)">2min</button>
-                                <button class="time-btn" onclick="selectTime(300)">5min</button>
-                            </div>
-                        </div>
-                        
-                        <div class="config-group">
-                            <div class="config-label">Dificuldade:</div>
-                            <div class="difficulty-selector">
-                                <button class="difficulty-btn" onclick="selectDifficulty('facil')">😊 Fácil</button>
-                                <button class="difficulty-btn active" onclick="selectDifficulty('medio')">😐 Médio</button>
-                                <button class="difficulty-btn" onclick="selectDifficulty('dificil')">😤 Difícil</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div style="text-align: center; margin-top: 30px;">
-                        <button class="btn" onclick="startStudyWithTimer()" style="margin-right: 15px;">🚀 Começar Estudo</button>
-                        <button class="btn btn-secondary" onclick="closeTimerConfig()">❌ Cancelar</button>
-                    </div>
-                </div>
             </div>
             
             <div id="createMode">
@@ -450,7 +470,7 @@
             <div id="studyMode" class="study-mode" style="display: none;">
                 <div class="timer-container">
                     <div class="timer-display" id="timerDisplay">01:00</div>
-                    <div style="font-size: 0.9rem; color: #666;" id="difficultyDisplay">Dificuldade: Médio</div>
+                    <div style="font-size: 0.9rem; font-weight: bold;" id="difficultyDisplay">Dificuldade: Médio</div>
                 </div>
                 
                 <div class="card-counter" id="cardCounter">Card 1 de 0</div>
@@ -492,6 +512,25 @@
                 <div class="form-group">
                     <label for="answer">Resposta:</label>
                     <textarea id="answer" placeholder="Digite a resposta aqui..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="config-label">Tempo:</label>
+                    <div class="time-selector" style="justify-content: center;">
+                        <button type="button" class="time-btn" onclick="selectCardTime(30)">30s</button>
+                        <button type="button" class="time-btn active" onclick="selectCardTime(60)">1min</button>
+                        <button type="button" class="time-btn" onclick="selectCardTime(120)">2min</button>
+                        <button type="button" class="time-btn" onclick="selectCardTime(300)">5min</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="config-label">Dificuldade:</label>
+                    <div class="difficulty-selector" style="justify-content: center;">
+                        <button type="button" class="difficulty-btn" onclick="selectCardDifficulty('facil')">😊 Fácil</button>
+                        <button type="button" class="difficulty-btn active" onclick="selectCardDifficulty('medio')">😐 Médio</button>
+                        <button type="button" class="difficulty-btn" onclick="selectCardDifficulty('dificil')">😤 Difícil</button>
+                    </div>
                 </div>
 
                 <button type="submit" class="save-btn">Salvar Card</button>
@@ -562,10 +601,9 @@
         let currentCardIndex = 0;
         let isStudyMode = false;
         let timerInterval = null;
-        let timePerCard = 60; // segundos
         let currentTime = 60;
-        let difficulty = 'medio';
-        let autoAdvance = false;
+        let cardTime = 60;
+        let cardDifficulty = 'medio';
 
         document.addEventListener('DOMContentLoaded', function() {
             updateStudyButton();
@@ -590,6 +628,14 @@
         function closeModal() {
             document.getElementById('cardModal').style.display = 'none';
             document.getElementById('cardForm').reset();
+            
+            // Reset configurações
+            cardTime = 60;
+            cardDifficulty = 'medio';
+            document.querySelectorAll('#cardModal .time-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('#cardModal .difficulty-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('#cardModal .time-btn:nth-child(2)').classList.add('active');
+            document.querySelector('#cardModal .difficulty-btn:nth-child(2)').classList.add('active');
         }
 
         function openManageModal() {
@@ -609,15 +655,28 @@
                 return;
             }
             
-            cardsList.innerHTML = cards.map(card => `
-                <div class="card-item">
-                    <div class="card-content">
-                        <div class="card-question">${card.question}</div>
-                        <div class="card-answer">${card.answer}</div>
+            cardsList.innerHTML = cards.map(card => {
+                const timeText = card.time ? `${card.time}s` : '60s';
+                const difficultyConfig = {
+                    'facil': { emoji: '😊', name: 'Fácil', color: '#28a745' },
+                    'medio': { emoji: '😐', name: 'Médio', color: '#fd7e14' },
+                    'dificil': { emoji: '😤', name: 'Difícil', color: '#dc3545' }
+                };
+                const difficulty = difficultyConfig[card.difficulty || 'medio'];
+                
+                return `
+                    <div class="card-item">
+                        <div class="card-content">
+                            <div class="card-question">${card.question}</div>
+                            <div class="card-answer">${card.answer}</div>
+                            <div style="font-size: 0.8rem; color: #666; margin-top: 5px;">
+                                ⏱️ ${timeText} | <span style="color: ${difficulty.color}; font-weight: bold;">${difficulty.emoji} ${difficulty.name}</span>
+                            </div>
+                        </div>
+                        <button class="delete-btn" onclick="deleteCard(${card.id})">🗑️ Excluir</button>
                     </div>
-                    <button class="delete-btn" onclick="deleteCard(${card.id})">🗑️ Excluir</button>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function deleteCard(cardId) {
@@ -638,6 +697,8 @@
             const card = {
                 question: question,
                 answer: answer,
+                time: cardTime,
+                difficulty: cardDifficulty,
                 id: Date.now()
             };
 
@@ -661,73 +722,49 @@
             }
         }
 
-        function openTimerConfig() {
+        function selectCardTime(seconds) {
+            cardTime = seconds;
+            
+            document.querySelectorAll('#cardModal .time-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        function selectCardDifficulty(level) {
+            cardDifficulty = level;
+            
+            document.querySelectorAll('#cardModal .difficulty-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        function startStudy() {
             if (cards.length === 0) {
                 alert('Crie pelo menos um card antes de iniciar o estudo!');
                 return;
             }
             
-            document.getElementById('timerConfig').style.display = 'block';
-        }
-        
-        function closeTimerConfig() {
-            document.getElementById('timerConfig').style.display = 'none';
-        }
-        
-        function selectTime(seconds) {
-            timePerCard = seconds;
-            currentTime = seconds;
-            
-            document.querySelectorAll('.time-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-        }
-        
-        function selectDifficulty(level) {
-            difficulty = level;
-            
-            // Configurar auto-advance baseado na dificuldade
-            switch(level) {
-                case 'facil':
-                    autoAdvance = false;
-                    break;
-                case 'medio':
-                    autoAdvance = false;
-                    break;
-                case 'dificil':
-                    autoAdvance = true;
-                    break;
-            }
-            
-            document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-        }
-        
-        function startStudyWithTimer() {
             isStudyMode = true;
             currentCardIndex = 0;
-            currentTime = timePerCard;
             
-            document.getElementById('timerConfig').style.display = 'none';
             document.getElementById('createMode').style.display = 'none';
             document.getElementById('studyMode').style.display = 'block';
             
-            updateDifficultyDisplay();
             loadCurrentCard();
-            startTimer();
         }
         
-        function updateDifficultyDisplay() {
-            const difficultyNames = {
-                'facil': '😊 Fácil',
-                'medio': '😐 Médio',
-                'dificil': '😤 Difícil'
+        function updateDifficultyDisplay(card) {
+            const difficultyConfig = {
+                'facil': { name: '😊 Fácil', color: '#28a745' },
+                'medio': { name: '😐 Médio', color: '#fd7e14' },
+                'dificil': { name: '😤 Difícil', color: '#dc3545' }
             };
             
-            document.getElementById('difficultyDisplay').textContent = 
-                `Dificuldade: ${difficultyNames[difficulty]}`;
+            const config = difficultyConfig[card.difficulty || 'medio'];
+            const displayElement = document.getElementById('difficultyDisplay');
+            displayElement.textContent = `Dificuldade: ${config.name}`;
+            displayElement.style.color = config.color;
         }
         
-        function startTimer() {
+        function startTimer(card) {
             if (timerInterval) clearInterval(timerInterval);
             
             timerInterval = setInterval(() => {
@@ -735,11 +772,9 @@
                 updateTimerDisplay();
                 
                 if (currentTime <= 0) {
-                    if (autoAdvance && difficulty === 'dificil') {
-                        // No modo difícil, avança automaticamente
+                    if (card.difficulty === 'dificil') {
                         nextCard();
                     } else {
-                        // Nos outros modos, apenas alerta
                         clearInterval(timerInterval);
                         alert('Tempo esgotado! Clique em "Próximo" para continuar.');
                     }
@@ -763,11 +798,11 @@
             }
         }
         
-        function resetTimer() {
-            currentTime = timePerCard;
+        function resetTimer(card) {
+            currentTime = card.time || 60;
             updateTimerDisplay();
             if (isStudyMode) {
-                startTimer();
+                startTimer(card);
             }
         }
 
@@ -784,7 +819,9 @@
             front.innerHTML = `<p>${card.question}</p>`;
             back.innerHTML = `<p>${card.answer}</p>`;
             
-            // Reset flip
+            updateDifficultyDisplay(card);
+            resetTimer(card);
+            
             cardInner.classList.remove('flipped');
         }
 
@@ -792,9 +829,7 @@
             if (currentCardIndex < cards.length - 1) {
                 currentCardIndex++;
                 loadCurrentCard();
-                resetTimer();
             } else {
-                // Fim do estudo
                 clearInterval(timerInterval);
                 alert('Parabéns! Você terminou todos os cards!');
                 endStudy();
@@ -805,7 +840,6 @@
             if (currentCardIndex > 0) {
                 currentCardIndex--;
                 loadCurrentCard();
-                resetTimer();
             }
         }
 
